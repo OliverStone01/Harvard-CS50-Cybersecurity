@@ -1,4 +1,3 @@
-# CS50 Cybersecurtiy
 ## Week 0 - Introduction to cybersecurity
 
 Date: 06-07-2025
