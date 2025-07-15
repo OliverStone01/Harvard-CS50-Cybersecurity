@@ -155,23 +155,181 @@ There is an alternative to code books called **Ciphers**
 
 ### Ciphers
 
-Ciphers are algorithmic ways to encrypt messages and instead of encrypting each word, we will encrypt each letter (each bit). 
+Ciphers are algorithmic ways to encrypt messages and instead of encrypting each word, we will encrypt each letter (each bit).
+
+**Encipher**: Take a message in plaintext and convert it into ciphertext. This is also known as **Encrypt**.
+
+**Decipher**: Take ciphertext and convert it back to plaintext. This is also known as **Decrypt**.
+
+**Keys**: A key is what is used to encrypt and decrypt the message by the sender and the reciever.
+
+**Secret-Key Cryptography**: This is where the two parties must keep the algorithm (key) they are using a secret otherwise people wpuld be able to read the messages. This is also known as **symmetric-key encryption** because both parties are using the same key.
+
+```
+               - - - 
+      key -> |       |
+plaintext -> |       | -> ciphertext
+               - - -
+
+// Simple example
+
+      - - -
+1 -> |     |
+B -> |     | -> C
+      - - -
+```
+
+This is also known as `ceasers cipher` or `rotational cipher` because the numbers are being rotated.
+
+ROT13 is a well known cipher that is a key of 13 so A becomes N.
+
+It'a imporant not to use a key of 26 because otherwise A becomes A. There is a joke in cipher that goes "ROT26 is twice as secure at ROT13."
+
+Here is a cipher, try crack it:
+```
+OR FHER BG QEVAX LBHE BINYGVAR
+
+// The key is 13 (ROT13)
+BE SURE TO DRINK YOUR OVALTINE
+```
+
+To do this we `decrypt` the message by taking the cipher text and going through each possible letter adding 1 to the key untill the plain text makes sence.
+
+What is a good encryption now days?
+- AES
+- Triple DES
+
+These are very common secret-key ciphers.
+
+-----
+
+### Public-key cryptography (asymetric cryptography)
+
+The issue with `secret-key cryptography` is that you are relying on both parties already knowing the secret key. But how would you begin communicating with someone new that doesnt know the secret key.
+
+The solution is `public-key cryptography`.
+
+Some of the algoriths used are:
+- Diffie-Hellman
+- MQV
+- RSA
+...
+
+With public-key encryption, everyone has two keys. One `private-key` that is meant to be kept a secret and should'nt be shared with anyone, and a `public-key` which is shared with anyone you wish to communicate with.
+
+The two keys have a mathmatical connection which allows users to encrypt a message with a key and then decrypt with the other key.
+
+For example. If Alice wanted to send a message to Bob. What Alice will do is encryt the message using Bob's public key. This will encrypt the message from outsides being able to view the message and the only person who is able to read the message is Bob when he decrypts the message with his private key.
+
+RSA is a very common algorithm to create these keys. RSA uses this calculation to calculate the keys:
+
+// RSA formula
+n = p x q
+
+p = a really large prime number  
+q = a really large prime number
+
+c = m<sup>e</sup> mod n  
+m = c<sup>d</sup> mod n
 
 
+Using Diffie-Hellman we can do `key exhange`. This is a way that two systems can use this algorithm to agree on a key that they can use as a secret key.
+
+// Diffie-Hellman
+A = g<sup>a</sup> mod p
+B = g<sup>b</sup> mod p
+
+s = B<sup>a</sup> mod p
+s = A<sup>b</sup> mod p
+
+-----
+
+### Digital Signatures
+
+Digital signatures are a way for you to be able to sign information and documents using your private key. Some of the algorithms used are:
+
+- DSA
+- ECDSA
+- RSA
+...
+
+To sign something digitaly, you take the message you want to send and pass it through a hash function which is then taken and run throught the `digital signature algorithm` with your private key.
+```
+message -> [ hash function ] -> hash
+
+                - - - - - - - - - -
+private key -> | digital signature |
+       hash -> |     algorithm     | -> signature
+                - - - - - - - - - -
+```
+
+The recipent then verifies your signature by using your public key.
+
+```
+               - - - - - - 
+public key -> | decryption |
+ signature -> |            | -> hash
+               - - - - - -
+```
+
+If the receiption gets the exact same hash as you, then it verifies that it is your signature.
+
+-----
+
+### Passkeys
+
+There is one more application that solves the issues of needing passwords. It is called `passkeys` also known as `web authentication`. This passkey rely on private amd public keys.
+
+Passkeys mean you will no longer need a username or password. Instead you will need to create a passkey. What this means is your phone or computer will ask you for a `factor` such as a fingerprint or a scan of your face. The device will then generate a public key and a private key for that one app. 
+
+When you then want to sign in later, you can use a cloud service which syncronises your passkeys across your devices. Then using your fingerprint you can authorise your self and sign in.
+
+The website that you are signing into will then use the public key of your passkey for that site and be able to verify that it is you.
+
+If you dont use cloud services and you lose your device. There is a chance you will lose access to your account.
+
+-----
+
+### Encryption in Transit
+
+This is a fancy way of saying that our data should be encrypted when it's traveling from point `a` to point `b`. What we are trying to avoid is a `machine in the middle attack`.
+
+### End-to-End Encryption
+
+This Allows you to be sure that the data is encrypted from begining to end during the transit no matter if there are other servers of systems linking the two together.
+
+This can be seen with Apples imessage and whatsapp. This means these companies can't see your messages even thought they pass through there servers.
+
+-----
+
+### Deletion
+
+Data is stored on hard drives, solid state drives, and usb sticks on your computer. When you delete files on your coputer, you are not actually deleting the file. Even when you empty the devices bin, all you are actually doing is telling the computer to forget the location of the data.
+
+All the data is still actually on your computer and can now be overwritten but alot of the time it will only be partialy overwritten which means some of the file can still be located making it insecure.
+
+### Secure Deletion
+
+This completly deletes data by changing the bits that were storing the data to all `0's` or `1's` making the data completly unrecognisable.
+
+### Full-Disk encryption
+
+This is also known as `Encryption at rest`. It means to encrypt the data on the device and keep the data secure untill the password is entered and the data is decrypted for use.
+
+This doesnt stop theifs from wiping your data and using the device but it does prevent them getting your data.
+
+An evil side to full-disk encryption is ransomware where attackers will get access to your system, they can lock it down with encryption and request payment to decrypt your data.
 
 
+### Quantum computing
 
+All computers use bits to store and make up data (`0's and 1's`). In quantum computing a bit can be thought of diffrently using quantum physics. A bit can become a quantum bit also known as a `kubit`. This means that the kubit can represent a 1 and a 0 at the same time. This means one kubit can be in two states at one time.
 
+- 2 kubits = 4 states at once.
+- 3 kubits = 8 states at once.
+- 32 kubits = 4 billion states at once.
 
-
-
-
-
-
-
-
-
-
+What this means is your computing power is rediculsly imporved which makes it dangerous to our current security.
 
 
 
