@@ -133,6 +133,29 @@ These are functions written in code (such as python) that take an input of arbir
 
 -----
 
+### Cryptography
+
+cryptography is all about the prctice and study of securing our data specifically when we we want to transmit the data.
+
+#### Codes
+This is mapping **code** words to the actual message. What would happen is you and the person you are sending the message too would have a book with a list of code words and their value they have been assigned to.
+
+The sender would then use this book to convert the message they want to send using these code words so that the message is hidden from outsiders trying to read the message.
+
+When the receiver get's the message, they use the book to conver all the code words back to the original value (decoded) and then they are able to read the message sent.
+
+The issue with this is that the users must have a book and therefor the likely hood of this book being stollen or made a copy of is quite high and that person can then intersept your messages.
+
+**Encode** = To take plaintext and convert it into codetext.
+**Decode** = To take codetext and conver it into plaintext.
+
+There is an alternative to code books called **Ciphers**
+
+-----
+
+### Ciphers
+
+Ciphers are algorithmic ways to encrypt messages and instead of encrypting each word, we will encrypt each letter (each bit). 
 
 
 
