@@ -87,17 +87,125 @@ To do this, you need to use `TLS`. TLS relise on public and private key certific
 
 On this certificate are things like, name of the website, how long the certificate is valid for, and the public key.
 
-The third-parties that are signing these certificates are called `Certificate Authority (CA)`. 
+The third-parties that are signing these certificates are called `Certificate Authority (CA)`. They are a collection of companies that sign the certificates for the browsers to use.
 
+When you visit a site, the browser first downloads the certificate. The browser then takes the certificate with the specific fields and runs it thorugh a specific hash function. Then your browser then takes the public key of the `CA` that signed that certificate and it takes the signature from the certificate and hashes them through another specific hash function. If the hashes match, you can trust the connection with this website.
 
+Does TLS and HTTPS keep you secure?
 
+Mathmatically yes, but humans are the potential weekness. There is an attack called SSL stripping. This attack fools the users to thing that they have a secure connection to the site they are tryign to use.
 
+What happens is that when we search in browsers now days, we are no longer (out of time saving habits) typing out the entire URL and intead are only typing `example.com`. This means that your browser has to figure out which site you are trying to use and direct you to that site.
 
+What an attacker can do is intercept this and direct you to a site that looks exactly like the site you are trying to access but is insecure and they have access to all the information (log in details, bank details) that you use on the site.
 
+You browser packet will look like this if you search `example.com` and not the entire URL:
+```
+GET / HTTP/3
+Host example.com
+```
 
+Then the server may return the following:
+```
+HTTP/3 307
+Location: https:examp1e.com/
+```
 
+Code 307 = Redirect to the location URL.
 
+What can happer is the attacker can respond with this packet redirecting you to their site. The cleaver part about this is that because the new location URL is HTTPS, you believe you are at a secure site, but if you take a look at the name of the URL, it is actually `examp'1'e.com`.
 
+How do we mitigate this attack? As the user, you could get into the habit of writing out the entire url (bit of a long approach) but it is the best meathod. 
+
+If you are the designer of the website, then you can use a protocol called `HSTS`.
+
+`HSTS` = Hyper-text strict-transport security.
+
+What this does is provide hints to the browser to always use HTTPS for example. It adds an additional header telling the browser that you want to be stricked with the data transportation security.
+
+```
+strict-transport-security: max-age=31536000
+```
+
+What this does is tell the browser to keep this level of security for a year.
+
+We can also add this security to subdomains as well by doing: 
+```
+strict-transport-security: max-age=31536000; includeSubDomains
+```
+
+This is great becuase after this package has been received by the browser, it will continue to use this for a year any time the browser goes to the site and it will not allow the browser to go to HTTP.
+
+You can also add `preload` like such:
+```
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+```
+
+What this does is tell the browsers to prelaod your website into the browsers install package so that you don't need to worry about the first time the user visits your website (before they get the package that tells them not to use HTTP because it will already be in the browsers source code.
+
+### VPR
+
+`VPN` = Virtual private network.
+
+This encrypts all your data being sent from point a to point b. To do this, it creates a tunnel from a to b that only you and the receiver have access to the tunnel and its data. 
+
+If you work at a company, chances are they will set you up with a VPN to connect to the network at that company. what this means is all the data sent between the two is fully encrypted.
+
+### SSH
+
+`SSH` = Secure Shell
+
+This is mostly used by developers and programmers. It is great for connecting to other devices on the network you are connect to via text based commands instead of a `GUI`.
+
+Here is some example of propts and how to connect to another device.
+
+`$` Type command here
+
+Show date:
+```
+$ date
+Thu Jan 1 12:00:00 AM EST 1970
+```
+
+Connect to another device:
+```
+$ ssh stanford.edu
+```
+
+This means you can control server from server and it is fully encrypted.
+
+-----
+
+### Port
+
+On the outside of these packets (envelope) is a port number which tells the world what service this packet is for. For example, if you were to pull up a website, you would get a port number of `80`. If the webserver responds and tells the browser to use HTTPS instead, then the browser will need to use port `443`. 
+
+Common port numbers:
+HTTP = 80
+HTTPS = 443
+SSH = 22
+...
+
+What computers do is listen for packets on these ports. What you might be thinking is well if the attackers know what the port number is, they might try to access your server through the port. What you might think to do is change the port to a diffrent number between 0 and 65000. But the issue is, attackers are able to do what's called `port scanning` where they can scan all the ports available.
+
+This is sometimes used by `penetration testers` to check your network for cracks and help you by identifying these issues so you can repair them.
+
+Someone else who might use this are `ethical hackers`. These are people who hack websites and other systems to get them repaired and keep them safe from malicous hackers.
+
+In a company, you may be put into two teams to test the network, these are known as `red team (hackers` and `blue team (defenders)`.
+
+How do we keep these attackers out? We can use `firewalls`. Firewalls is software that protects the data inside of the network from getting out and keeps outside data from getting in. Admins can edit what form of data or authentication that is allowed to pass through.
+
+The firewalls work by blocking packets based on IP addresses, port numbers, and by deep packet inspection. What this means is if you wanted to block specific sites on you home network, you can configure the firewall to block packets from the ip address of that site. 
+
+You can also block the enitre internet if you wanted but then unblock the port 22 for SSH so that you can still remote into devices.
+
+A deep packet inspection means that some firewalls can open up packets and see whats inside of them. This then allows you to block other headers and values.
+
+To implement this type of firewall, we need to use a proxy. A proxy is a server or a peice of software on your network that passes data from a to b checking the packets and choosig whether to send the packets to b or not.
+```
+a <---> Proxy <---> b
+```
 
 
 
