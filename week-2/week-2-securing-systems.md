@@ -202,11 +202,37 @@ You can also block the enitre internet if you wanted but then unblock the port 2
 
 A deep packet inspection means that some firewalls can open up packets and see whats inside of them. This then allows you to block other headers and values.
 
-To implement this type of firewall, we need to use a proxy. A proxy is a server or a peice of software on your network that passes data from a to b checking the packets and choosig whether to send the packets to b or not.
+To implement this type of firewall, we need to use a proxy. A proxy is a server or a piece of software on your network that passes data from a to b checking the packets and choosing whether to send the packets to b or not.
 ```
 a <---> Proxy <---> b
 ```
 
+When working for a company or school where you are provided a laptop, chances are they are tracking and monitoring everything you are doing on that laptop by using a proxy.
 
+If you have a work email address, what the company could be doing is anytime you get sent a link (URL) to a website and you click on it. It sends you to a company site followed by a query with the original URL. This was a company can track the sites you have visited and can also prevent phishing attacks.
 
+-----
+
+### Malware
+
+Malware is malicious software that is written by someone. Malware comes in many diffrent forms.
+
+#### Virus
+A virus is malware that attaches it self to a host. To get a virus, you would have to download a file and run it on your device for the virus to take effect. It can also be on a email link that you might click on. A virus relies on human error.
+
+#### Worm
+A worm is similar to a virus as in it can do anything to your computer. The major diffrence is that a worm doesn't need to be installed by a human or rely on human error at all. A worm, once installed on one device in the network, can use port scanning to search for other unprotected devices on the network and spread to them. 
+
+With worms, people create `botnets`. A botnet is a network of computers under one control. What attackers will do is spread malware that doesn't do anything to your computer but sits listening for commands. Once the attacker has spread the malware to thousands or as many devices as they wish. They can use all those devices at once to form a much larger attack.
+
+One attack someone might use a botnet for is a `distributed denial-of-service attack (DDoS)`. A `Dos` on it's own is a sigular device trying to deny service by providing lots of requests to a site so that it becomes unavailable to others by overwelming the site.
+
+The issue is, with one device, you probably don't have enough resources to overwelm the site. Instead, they use `DDoS` by bringing all those computers in the botnet to attack at the same time. Now, you might have enough resources to block the site.
+
+A `DoS` is much easier to block as a company becuase the attack will be coming from one IP address. But a `DDoS` is much harder as it might be thousands of IP addresses. 
+
+### Antivirus
+Antivirus is software downloaded on your computer that can detect viruses and other malware on the device. What it can do is then set to delete/remove the virus once you restart your device. The issues here are: One, the antivirus needs to have knowledge of the virus so that it knows what to look for. Second, It will not stop the malware getting on the device in most cases. Instead it will delete it once it's found. Meaning if you have already run the malware, it will omly delete it from the next time you restart your device.
+
+Because antivirus software must know the malware to protect against it. Your device is still vulnerable to `zero-day attacks` which are attacks that the manufacturer or antivirus companies have no knowledge about.
 
