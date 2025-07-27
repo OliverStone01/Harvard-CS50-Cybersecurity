@@ -67,12 +67,45 @@ SQL is a language commonly used to communicate with databases. SQL is commonly u
 
 What could potentialy go wrong is that the user could input something malicious. To prevent this, we need to `sanitise` user inputs. To do this, we are going to escape the characters again like we did before. 
 
+Let's take a look at an example of what an attacker might do to attack this database by injecting their own code in SQL.
 
+Instead of inputing a username in the username bar such as `malan`. Instead, we enter something like:
+```
+malan'; DELETE FROM users; --
+```
 
+Let's break that down:
+- The single quote after `malan` is to tell SQL that is the "end" of the input from the user.
+- The semicolan ends that part of the code and allows us to put more code after on the same line.
+- The `DELETE FROM users;` will delete all users from the data base called `users`.
+- The `--` is to comment out any other code in the query. In this case it will block out the single quote that was supposed to be put after the username input.
 
+Here is what the entire query could look like with this malicious code added:
+```
+SELECT * FROM users WHERE username = 'malan'; DELETE FROM users; --'
+```
 
+Let's take a look at another one that's a little more common. When you make a log in request on a website, you are not likly just entering a username, you are most likely entering a password at the same time to submit under the same request to the database. Here is what that might look like:
+```
+SELECT * FROM users WHERE username = '{username}' AND password = '{password}';
+```
 
+Here it is still possible to inject our own code because we are using placeholders where we are going to blidely plug in the text that the user inputs. What that means is someone could input this into the username and password:
+```
+Username: malan
+password: ' OR '1'='1
+```
 
+That would then turn the request to the data base like this:
+```
+SELECT * FROM users WHERE username = 'malan' AND password = '' OR '1'='1';
+```
+
+This then tells the database, get me the information for all users where the username is `malan` and the password is equal to nothing. Or if 1 = 1 then give me the information. 
+
+This will therefor return everything in the database.
+
+The solution is `prepared statements`. 
 
 
 
