@@ -105,13 +105,131 @@ This then tells the database, get me the information for all users where the use
 
 This will therefor return everything in the database.
 
-The solution is `prepared statements`. 
+The solution is `prepared statements`. What we can do is use `?` in the query as placeholders. That way it removed the need for using `'` which run the risk of being attacked. The placeholder request looks like this:
+```
+SELECT * FROM users WHERE username = ?
+```
 
+If the user now input's the malicious code like before, the request will now look like this instead:
+```
+SELECT * FROM users WHERE username = 'malan''; DELETE FROM users; --'
+```
 
+As you can see the double apostrophe cancels out the rest of the malicious code.
 
+Let's now look at the second statment and see how this now looks:
+```
+SELECT * FROM users WHERE username = ? AND password = ?
+```
 
+When the attacker then sends the malicious code, it looks like this:
+```
+SELECT * FROM users WHERE username = 'malan' AND password = ''' OR ''1''=''1'
+```
 
+There is another similar type of injection called `command injection`. Command line injection is where the users input is sent to the systems comman line interface and attacks can be done on the system. This is very dangerous becuase the attacker can not only delete files and things from the database, but they can also control your device and send mail.
 
+In other programming languages, there is another function called `eval`. This function evaluates what you send to it. 
 
+If you don't sanitise the data before it is send to system or eval, then you are putting your device and data at risk.
 
+The solution is to use a function that santises the data for you before it is sent. 
 
+-----
+
+### Developer tools
+
+Within a browser, you have what's called `developer tools`. Here you can see all the HTML, javascript, and the CSS that is making up the website. With these tools, let's look at a check box made with HTML:
+```
+<input disabled type="checkbox">
+```
+
+As you can see the type is a `checkbox` and the checkbox is disabled. This means you can see it, but you dont want to give access to the user to use it.
+
+The issue is, This HTML is being sent to every users device. So if they wanted to, they can edit this HTML (Not on the server, so it wont be perminent) but they can edit the disabled and make this option available to them. 
+
+Usualy this isnt a big deal, but if you are diabling this things to prevent the user from being able to agree to something or use something on a form when it is submitted. If they change this and submit, it will allow them to.
+
+The issue is you are relying on the user being honest which is something you should never do. To get around this, we need to do some server side validation.
+
+-----
+
+Let's now look at another type of attack that is vulenerable on HTML called `Cross-site request forgery (CSRF)`. If you recall. HTTP uses `GET` to get data from the server to display information on the website. It's important to know, when get is used, all the information is inside of the URL. Here is a link on amazon that allows you to buy the product imediatly instead of needing to add the item to your basket and go through the delivery steps:
+```
+<a href="https://www.amazon.com/dp/B07XLQ2FSK">Buy Now</a>
+```
+
+So why can this be malicious? Well, say someome took that link and created a website and used that link instead as an image tag. Like this:
+```
+<img src="https://www.amazon.com/dp/B07XLQ2FSK">
+```
+
+Now, eveytime you load this website, you will buy this product becuase the browser will process this url. Thankfully, amazon doesnt use this method. There is also a more secure way of sending data over the internet known as `POST`. Post is used to send data that you don't want visable in the url bar, such as payment information and password information.
+
+Post would also be used for images and videos to be posted as they don't really fit in the url and so its much easier to use post.
+
+"Post is meant to change state on the server"
+
+Unfortunatly, post is still able to be attacked. Here is a better implementation of that "Buy now" feature using a form from amazon:
+```
+<form action="https://www.amazon.com/" method="post">
+  <input name="dp" type="hidden" value="B07XLQ2FSK">
+  <button type="submit">Buy Now</button>
+</form>
+```
+
+As you can see, have an input called `dp` with the value of the product number and we have hidden this element so that the user can't see it in the URL.
+
+This does fix the issue we had with `get` and attackers beign able to put the link in the website as an image because a form cannot be submitted through a website. But what they can do is add this form to their site and use this JavaScript to post the form once you load the site:
+```
+<form action="https://www.amazon.com/" method="post">
+  <input name="dp" type="hidden" value="B07XLQ2FSK">
+  <button type="submit">Buy Now</button>
+</form>
+<script>
+  document.forms[0].submit();
+</script>
+```
+
+This is what's known as cross-site request forgery becuase it is being sent across sites and it is forgery becuase it is the attacker that is actually making these requests.
+
+So, how do we stop this `post` attack. We can use a `token`, commonly known as a `csrf_token`, inside of the form request that is randomly generatred by the server. The benifit is that each value of this token is unique to each user. This means that the attacker cannot use the previous methods of attack because they wont be able to get this number (unless they hack amazon first). Here is what this form would now look like:
+```
+<form action="https://www.amazon.com/" method="post">
+  <input name="csrf_token" type="hidden" value="1234abcd">
+  <input name="dp" type="hidden" value="B07XLQ2FSK">
+  <button type="submit">Buy Now</button>
+</form>
+```
+
+If you want to see more of these attacks, you can check out the `Open Worldwide Application Security Project (OWASP)`.
+
+-----
+
+Let's now look at attacks that are more focused towards the software that's on your mac, pc, or phone. 
+
+The first we are going to look at is called `Arbitrary Code Execution (ACE)`. This is where the attacker runs code on your device that is malicious and is not built into the software on your device. This is also known as `Remote Code Execution (RCE)` which is where the attacker can do this from anywhere in the world. How are these attacks done? They are very commonly done through what's called `Buffer Overflow`. 
+
+Buffer overflow is when a program is running, the computer needs more memory for example the users input. But if an attacker inputs a large attack code, so much that it overflows other parts of the program in memory, specifiacally the retrun adress and they manage to make the program return the the attackers code, then they can get the system to run some code that will then take over your device. 
+
+This is known as `cracking`. Cracking a device means you can take control of the device.
+
+There is a good side of reverse engineering called `malware analysis`. This is where you figure out what the malicious software does and how it was made. That way we can figure out a way to prevent it or fix it after it has been run.
+
+One way to prevent against these attacks is using `open-source code` apps and software. What this means is that the code is open for the user to read before installing so that you can see what is going to be executed and installed on your device. This doesnt mean that an attack isnt possible. The code may have bugs that the attacker might be able to find by reading through the software and find a way to attack.
+
+Another method agaist this is `closed-source software`. This is where the code that you get is hidden from the users and therfor the attacker so that it makes it much harder to find bugs in the software. 
+
+A way to insure that your software you are downloading is not malicious is to download it from an `app store`. This is because companies like Apple will vet the software to check that it is not malicious before allowing the public to download it to their devices. This is not to say it is perfect, but it's much better than installing from a site.
+
+How do app stores like Apple make sure that you can only install software from the app store. What happens is, the company uploads the software to the app store. Apple will then hash the software, then add their private key and the hash to get a signature. Then the software can be checked via this signature to make sure that it is safe to download as it is verified by the app store.
+
+Something that is similar but mostly used with software like linix is `Packet managers`. Packet managers allow us to install programs using things like `pip`. What they are doing to signing the software so that the device can verify the software before installing and running it. 
+
+Operating softwares are also bringing in native ways to do this.
+
+This is also not fail safe, as there may be some bugs in the code. Sometimes the attackers will seem like a good software developer and will wait till the thrist update or more to actualy deploy their malicious plans. A software company may sell their company and the new owners want to turn the code malicious. Maybe the company is hacked and the software is attacked and pushed to users via an update. But the cost of this to the attacker is so high that it is unlikely.
+
+What companies have done is allow `bug bounties`. What this means is you can find bugs for the company and you disclose it to the devs, they will then pay you for finding the issue. 
+
+You can learn more about threats at `Common Vulnerabilities and Exposures (CVE)`. There is also a scoring system for these vulnerabilities which are called `Common Vulnerabilities Scoring System (CVSS)`. There is a exloit predition system called `Exploit Prediction Scoring System (EPSS)` that people make probabilities of the vulnerabilities in the software. There is also a catalog of all the exploited vulnerabilities at `Known Exploited Vulnerabilities Catalog (KEV)`.
